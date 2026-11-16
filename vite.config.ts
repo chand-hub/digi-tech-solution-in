@@ -252,6 +252,10 @@ export default defineConfig(() => {
         '@': path.resolve(__dirname, '.'),
       },
     },
+    build: {
+      outDir: 'dist',
+      emptyOutDir: true,
+    },
     server: {
       // Disable HMR and Vite WebSocket server in Cloud Run (*.run.app) / HTTPS reverse-proxy
       // environments (or when DISABLE_HMR=true), so Vite stops throwing unhandled

@@ -85,27 +85,28 @@ Configure these in `.env` locally (never commit `.env`) and in **Cloudflare Page
 ## 6. Deployment: Google AI Studio → GitHub → Cloudflare Pages + D1
 
 1. **Push to GitHub**: Commit the project (verify `.env` and `data/*.db*` are ignored).
-2. **Create Cloudflare D1 Database**:
+2. **Create a Cloudflare Pages Project (Git Integration)**:
+   - Go to **Cloudflare Dashboard → Workers & Pages → Create application → Pages → Import an existing Git repository** *(do NOT create a Worker project or add a manual `npx wrangler pages deploy` deploy command)*.
+   - **Production branch**: `main`
+   - **Framework preset**: `Vite` (or `None`)
+   - **Build command**: `bun run build`
+   - **Build output directory**: `dist`
+   - Cloudflare Pages Git integration automatically uploads `dist` and deploys `/functions/api/*` after `bun run build` completes — no manual `npx wrangler pages deploy dist` command is needed.
+   - *(Note: If you encounter `Authentication error [code: 10000]` during `npx wrangler pages deploy dist`, either remove the unnecessary deploy command by using a native **Pages** Git project instead of **Workers Builds**, or update your `CLOUDFLARE_API_TOKEN` to include **Account → Cloudflare Pages → Edit** permission.)*
+3. **Create Cloudflare D1 Database & Apply Schema**:
    ```bash
    npx wrangler login
    npx wrangler d1 create digitech-solution-db
-   ```
-   Copy the `database_id` into `wrangler.toml`.
-3. **Apply Database Schema**:
-   ```bash
    npx wrangler d1 execute digitech-solution-db --remote --file=./schema.sql
    ```
-4. **Create Cloudflare Pages Project**:
-   - Connect your GitHub repository in **Cloudflare Dashboard → Workers & Pages → Create → Pages**.
-   - **Build command**: `npm run build`
-   - **Build output directory**: `dist`
-5. **Bind D1 Database in Cloudflare Pages**:
-   - Go to **Pages Project → Settings → Functions → D1 database bindings**.
+   Either bind `DB` in the Cloudflare Dashboard (Step 4) or uncomment `[[d1_databases]]` in `wrangler.toml` with your real `database_id` UUID.
+4. **Bind D1 Database in Cloudflare Pages**:
+   - Go to **Pages Project → Settings → Bindings (or Functions) → Add → D1 database**.
    - Variable name: `DB` → Select `digitech-solution-db`.
-6. **Add Encrypted Secrets in Cloudflare Pages**:
-   - Go to **Settings → Variables and Secrets → Add Secret** for `RESEND_API_KEY`, `OFFICIAL_NOTIFICATION_EMAIL`, `RESEND_FROM_EMAIL`, `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`, `ADMIN_API_KEY`, and optional WhatsApp secrets.
-7. **Configure Webhooks in Razorpay Dashboard**:
-   - Add Webhook URL: `https://your-domain.com/api/payments/webhook`
+5. **Add Encrypted Secrets in Cloudflare Pages**:
+   - Go to **Settings → Variables and Secrets → Add Secret** (for both Production and Preview if needed) for `RESEND_API_KEY`, `OFFICIAL_NOTIFICATION_EMAIL`, `RESEND_FROM_EMAIL`, `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`, `ADMIN_API_KEY`, and optional WhatsApp secrets.
+6. **Configure Webhooks in Razorpay Dashboard**:
+   - Add Webhook URL: `https://your-domain.com/api/razorpay/webhook`
    - Set Secret matching `RAZORPAY_WEBHOOK_SECRET`
    - Subscribe to `payment.captured`, `order.paid`, and `payment.failed`.
 

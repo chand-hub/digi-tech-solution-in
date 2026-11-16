@@ -1,15 +1,23 @@
 # Cloudflare Pages & D1 Configuration for DIGI TECH SOLUTION
-# Usage:
+#
+# Cloudflare Pages Git Integration deploys automatically from GitHub:
+#   - Build command: bun run build
+#   - Build output directory: dist
+#   - Deploy command: (leave empty / not used for Cloudflare Pages Git integration)
+#
+# Optional D1 Database Setup:
 #   1. Create D1 database: npx wrangler d1 create digitech-solution-db
-#   2. Replace database_id below with the generated UUID from Cloudflare
-#   3. Apply schema: npx wrangler d1 execute digitech-solution-db --remote --file=./schema.sql
-#   4. Configure secrets via Cloudflare Dashboard or: npx wrangler pages secret put RESEND_API_KEY
+#   2. Apply schema: npx wrangler d1 execute digitech-solution-db --remote --file=./schema.sql
+#   3. Bind "DB" in Cloudflare Dashboard (Pages -> Settings -> Bindings)
+#      OR uncomment [[d1_databases]] below with your real database_id UUID.
 
 name = "digi-tech-solution"
 compatibility_date = "2025-02-01"
 pages_build_output_dir = "dist"
 
-[[d1_databases]]
-binding = "DB"
-database_name = "digitech-solution-db"
-database_id = "REPLACE_WITH_YOUR_CLOUDFLARE_D1_DATABASE_ID"
+# Uncomment and replace with your real Cloudflare D1 UUID once created,
+# or configure the "DB" binding directly in Cloudflare Pages Dashboard:
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "digitech-solution-db"
+# database_id = "YOUR_CLOUDFLARE_D1_UUID"
