@@ -37,6 +37,7 @@ import { maskSensitive, timingSafeEqual } from './crypto';
 
 export interface RouterHooks {
   onEnquirySaved?: () => Promise<void> | void;
+  databaseStatus?: 'connected' | 'not_bound';
 }
 
 function resolveCorsHeaders(request: Request, env: EnvBindings): Record<string, string> {
@@ -354,7 +355,7 @@ export async function handleApiRequest(
           ok: true,
           service: 'DIGI TECH SOLUTION API',
           timestamp: new Date().toISOString(),
-          database: 'connected',
+          database: hooks?.databaseStatus ?? 'connected',
           integrations: {
             emailConfigured: emailSt.configured,
             razorpayConfigured: rzpSt.configured,
