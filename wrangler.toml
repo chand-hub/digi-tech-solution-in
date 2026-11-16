@@ -1,0 +1,15 @@
+# Cloudflare Pages & D1 Configuration for DIGI TECH SOLUTION
+# Usage:
+#   1. Create D1 database: npx wrangler d1 create digitech-solution-db
+#   2. Replace database_id below with the generated UUID from Cloudflare
+#   3. Apply schema: npx wrangler d1 execute digitech-solution-db --remote --file=./schema.sql
+#   4. Configure secrets via Cloudflare Dashboard or: npx wrangler pages secret put RESEND_API_KEY
+
+name = "digi-tech-solution"
+compatibility_date = "2025-02-01"
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "digitech-solution-db"
+database_id = "REPLACE_WITH_YOUR_CLOUDFLARE_D1_DATABASE_ID"
